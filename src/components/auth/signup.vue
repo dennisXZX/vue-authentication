@@ -117,7 +117,12 @@
         console.log(formData)
 
         // post to firebase
-        axios.post('/users.json', formData)
+        // https://firebase.google.com/docs/reference/rest/auth/#section-create-email-password
+        axios.post('/signupNewUser?key=AIzaSyDrZ4xYseIhxdgAjA4topcGOFhAif4FhCU', {
+          email: formData.email,
+          password: formData.password,
+          returnSecureToken: true
+        })
           .then(res => console.log(res))
           .catch(error => console.log(error))
       }
