@@ -28,8 +28,6 @@
 </template>
 
 <script>
-  import axios from '../../axios-auth'
-
   export default {
     data() {
       return {
@@ -44,17 +42,11 @@
           password: this.password,
         }
 
-        console.log(formData)
-
-        // post to firebase
-        // https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password
-        axios.post('/verifyPassword?key=AIzaSyDrZ4xYseIhxdgAjA4topcGOFhAif4FhCU', {
+        // dispatch a sign in action
+        this.$store.dispatch('signin', {
           email: formData.email,
-          password: formData.password,
-          returnSecureToken: true
+          password: formData.password
         })
-          .then(res => console.log(res))
-          .catch(error => console.log(error))
       }
     }
   }

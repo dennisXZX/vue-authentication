@@ -77,8 +77,6 @@
 </template>
 
 <script>
-  import axios from '../../axios-auth';
-
   export default {
     data () {
       return {
@@ -114,17 +112,8 @@
           terms: this.terms
         }
 
-        console.log(formData)
-
-        // post to firebase
-        // https://firebase.google.com/docs/reference/rest/auth/#section-create-email-password
-        axios.post('/signupNewUser?key=AIzaSyDrZ4xYseIhxdgAjA4topcGOFhAif4FhCU', {
-          email: formData.email,
-          password: formData.password,
-          returnSecureToken: true
-        })
-          .then(res => console.log(res))
-          .catch(error => console.log(error))
+        // dispatch a sign up action
+        this.$store.dispatch('signup', formData)
       }
     }
   }

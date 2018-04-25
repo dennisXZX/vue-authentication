@@ -11,33 +11,14 @@
 </template>
 
 <script>
-  import axios from 'axios'
-
   export default {
-    data() {
-      return {
-        users: []
+    computed: {
+      users() {
+        return this.$store.getters.users
       }
     },
     created() {
-      // retrieve data from firebase
-      axios.get('/users.json')
-        .then(res => {
-          console.log(res)
-          const data = res.data
-          const users = []
-
-          // convert the data object into an array
-          for (let key in data) {
-            const user = data[key]
-            user.id = key
-            users.push(user)
-          }
-
-          console.log(users)
-          this.users = users
-        })
-        .catch(error => console.log(error))
+      this.$store.dispatch('fetchUser')
     }
   }
 </script>
