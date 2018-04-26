@@ -95,4 +95,8 @@
         color: #fff;
         cursor: pointer;
     }
+
+    .logout:hover {
+        color: #fa923f;
+    }
 </style>

@@ -27,6 +27,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    // force the user to log out when the JWT expires
+    setLogoutTimer(context, expirationTime) {
+      setTimeout(() => {
+        context.dispatch('logout')
+      }, expirationTime * 1000)
+    },
     signup(context, authData) {
       // https://firebase.google.com/docs/reference/rest/auth/#section-create-email-password
       axios.post('/signupNewUser?key=AIzaSyDrZ4xYseIhxdgAjA4topcGOFhAif4FhCU', {
@@ -40,7 +46,14 @@ export default new Vuex.Store({
             userId: res.data.localId
           })
 
+          // store the new user to database
           context.dispatch('storeUser', authData)
+
+          // redirect to dashboard
+          router.replace('/dashboard')
+
+          // dispatch the auto log out action
+          context.dispatch('setLogoutTimer', res.data.expiresIn)
         })
         .catch(error => console.log(error))
     },
@@ -57,7 +70,11 @@ export default new Vuex.Store({
             userId: res.data.localId
           })
 
+          // redirect to dashboard
           router.replace('/dashboard')
+
+          // dispatch the auto log out action
+          context.dispatch('setLogoutTimer', res.data.expiresIn)
         })
         .catch(error => console.log(error))
     },
