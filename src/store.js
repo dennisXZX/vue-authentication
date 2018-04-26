@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import axios from './axios-auth'
 import globalAxios from 'axios'
 
+import router from './router'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -18,6 +20,10 @@ export default new Vuex.Store({
     },
     storeUser(state, users) {
       state.users = users
+    },
+    clearAuthData(state) {
+      state.idToken = null
+      state.userId = null
     }
   },
   actions: {
@@ -50,8 +56,17 @@ export default new Vuex.Store({
             token: res.data.idToken,
             userId: res.data.localId
           })
+
+          router.replace('/dashboard')
         })
         .catch(error => console.log(error))
+    },
+    logout(context) {
+      // clear up all JWT stored in the state
+      context.commit('clearAuthData')
+
+      // redirect to sign in page
+      router.replace('/signin')
     },
     storeUser(context, userData) {
       if (!context.state.idToken) {
