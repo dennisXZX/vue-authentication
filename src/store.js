@@ -58,6 +58,7 @@ export default new Vuex.Store({
         return
       }
 
+      // send a post request with the JSON Web Token
       globalAxios.post(`/users.json?auth=${context.state.idToken}`, userData)
         .then(res => console.log(res))
         .catch(error => console.log(error))
@@ -67,6 +68,7 @@ export default new Vuex.Store({
         return
       }
 
+      // send a get request with the JSON Web Token
       globalAxios.get(`/users.json?auth=${context.state.idToken}`)
         .then(res => {
           const data = res.data
