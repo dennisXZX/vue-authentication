@@ -46,6 +46,13 @@ export default new Vuex.Store({
             userId: res.data.localId
           })
 
+          // store the JWT in local storage
+          const now = new Date()
+          const expirationDate = new Date(now.getTime() + res.data.expiresIn * 1000)
+          localStorage.setItem('token', res.data.idToken)
+          localStorage.setItem('userId', res.data.localId)
+          localStorage.setItem('expirationDate', expirationDate)
+
           // store the new user to database
           context.dispatch('storeUser', authData)
 
@@ -56,6 +63,29 @@ export default new Vuex.Store({
           context.dispatch('setLogoutTimer', res.data.expiresIn)
         })
         .catch(error => console.log(error))
+    },
+    autoLogin(context) {
+      const token = localStorage.getItem('token')
+
+      // should not log in the user if the JWT is not in local storage
+      if (!token) {
+        return
+      }
+
+      const expirationDate = localStorage.getItem('expirationDate')
+      const now = new Date()
+
+      // should not log in the user if the token has expired
+      if (now >= expirationDate) {
+        return
+      }
+
+      const userId = localStorage.getItem('userId')
+
+      context.commit('authUser', {
+        token: token,
+        userId: userId
+      })
     },
     signin(context, authData) {
       // https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password
@@ -69,6 +99,13 @@ export default new Vuex.Store({
             token: res.data.idToken,
             userId: res.data.localId
           })
+
+          // store the JWT in local storage
+          const now = new Date()
+          const expirationDate = new Date(now.getTime() + res.data.expiresIn * 1000)
+          localStorage.setItem('token', res.data.idToken)
+          localStorage.setItem('userId', res.data.localId)
+          localStorage.setItem('expirationDate', expirationDate)
 
           // redirect to dashboard
           router.replace('/dashboard')
@@ -84,6 +121,11 @@ export default new Vuex.Store({
 
       // redirect to sign in page
       router.replace('/signin')
+
+      // clear the local storage
+      localStorage.removeItem('token')
+      localStorage.removeItem('userId')
+      localStorage.removeItem('expirationDate')
     },
     storeUser(context, userData) {
       if (!context.state.idToken) {
