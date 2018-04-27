@@ -18,17 +18,19 @@ export default new Vuex.Store({
       state.idToken = userData.token
       state.userId = userData.userId
     },
+
     storeUser(state, users) {
       state.users = users
     },
+
     clearAuthData(state) {
       state.idToken = null
       state.userId = null
     }
   },
   actions: {
+    // helper action to save data into local storage
     _saveInLocalStorage(context, data) {
-      console.log('data', data)
       // store the JWT in local storage
       const now = new Date()
       const expirationDate = new Date(now.getTime() + data.expiresIn * 1000)
@@ -36,12 +38,14 @@ export default new Vuex.Store({
       localStorage.setItem('userId', data.localId)
       localStorage.setItem('expirationDate', expirationDate)
     },
+
     // force the user to log out when the JWT expires
     setLogoutTimer(context, expirationTime) {
       setTimeout(() => {
         context.dispatch('logout')
       }, expirationTime * 1000)
     },
+
     signup(context, authData) {
       // https://firebase.google.com/docs/reference/rest/auth/#section-create-email-password
       axios.post('/signupNewUser?key=AIzaSyDrZ4xYseIhxdgAjA4topcGOFhAif4FhCU', {
@@ -69,6 +73,8 @@ export default new Vuex.Store({
         })
         .catch(error => console.log(error))
     },
+
+    // sign in user automatically if there is token in the local storage
     autoSignin(context) {
       const token = localStorage.getItem('token')
 
@@ -92,6 +98,7 @@ export default new Vuex.Store({
         userId: userId
       })
     },
+
     signin(context, authData) {
       // https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password
       axios.post('/verifyPassword?key=AIzaSyDrZ4xYseIhxdgAjA4topcGOFhAif4FhCU', {
@@ -116,6 +123,7 @@ export default new Vuex.Store({
         })
         .catch(error => console.log(error))
     },
+
     logout(context) {
       // clear up all JWT stored in the state
       context.commit('clearAuthData')
@@ -128,6 +136,7 @@ export default new Vuex.Store({
       localStorage.removeItem('userId')
       localStorage.removeItem('expirationDate')
     },
+
     storeUser(context, userData) {
       if (!context.state.idToken) {
         return
@@ -138,6 +147,7 @@ export default new Vuex.Store({
         .then(res => console.log(res))
         .catch(error => console.log(error))
     },
+
     fetchUser(context) {
       if (!context.state.idToken) {
         return
@@ -165,6 +175,7 @@ export default new Vuex.Store({
     users(state) {
       return state.users
     },
+
     isAuthenticated(state) {
       return state.idToken !== null
     }
