@@ -27,6 +27,15 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    _saveInLocalStorage(context, data) {
+      console.log('data', data)
+      // store the JWT in local storage
+      const now = new Date()
+      const expirationDate = new Date(now.getTime() + data.expiresIn * 1000)
+      localStorage.setItem('token', data.idToken)
+      localStorage.setItem('userId', data.localId)
+      localStorage.setItem('expirationDate', expirationDate)
+    },
     // force the user to log out when the JWT expires
     setLogoutTimer(context, expirationTime) {
       setTimeout(() => {
@@ -47,11 +56,7 @@ export default new Vuex.Store({
           })
 
           // store the JWT in local storage
-          const now = new Date()
-          const expirationDate = new Date(now.getTime() + res.data.expiresIn * 1000)
-          localStorage.setItem('token', res.data.idToken)
-          localStorage.setItem('userId', res.data.localId)
-          localStorage.setItem('expirationDate', expirationDate)
+          context.dispatch('_saveInLocalStorage', res.data)
 
           // store the new user to database
           context.dispatch('storeUser', authData)
@@ -64,7 +69,7 @@ export default new Vuex.Store({
         })
         .catch(error => console.log(error))
     },
-    autoLogin(context) {
+    autoSignin(context) {
       const token = localStorage.getItem('token')
 
       // should not log in the user if the JWT is not in local storage
@@ -101,11 +106,7 @@ export default new Vuex.Store({
           })
 
           // store the JWT in local storage
-          const now = new Date()
-          const expirationDate = new Date(now.getTime() + res.data.expiresIn * 1000)
-          localStorage.setItem('token', res.data.idToken)
-          localStorage.setItem('userId', res.data.localId)
-          localStorage.setItem('expirationDate', expirationDate)
+          context.dispatch('_saveInLocalStorage', res.data)
 
           // redirect to dashboard
           router.replace('/dashboard')

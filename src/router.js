@@ -18,7 +18,10 @@ const routes = [
     path: '/dashboard',
     component: DashboardPage,
     beforeEnter(to, from, next) {
-      if (store.state.idToken) {
+      const localToken = localStorage.getItem('token')
+
+      // if there is a token in the state or in local storage, proceed to dashboard page
+      if (store.state.idToken || localToken) {
         next()
       } else {
         next('/signin')
