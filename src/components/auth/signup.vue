@@ -3,12 +3,15 @@
     <div class="signup-form">
       <form @submit.prevent="onSubmit">
         <!-- email -->
-        <div class="input">
+        <div class="input" :class="{ invalid: $v.email.$error }">
           <label for="email">Mail</label>
           <input
                   type="email"
                   id="email"
+                  @input="$v.email.$touch()"
                   v-model="email">
+            <div v-if="!$v.email.email">Please provide a valid email address.</div>
+            <div v-if="!$v.email.required">This field must not be empty.</div>
         </div>
         <!-- age -->
         <div class="input">
@@ -77,6 +80,8 @@
 </template>
 
 <script>
+    import { required, email } from 'vuelidate/lib/validators'
+
   export default {
     data () {
       return {
@@ -88,6 +93,12 @@
         hobbyInputs: [],
         terms: true,
         hobbyId: 1
+      }
+    },
+    validations: {
+      email: {
+        required,
+        email
       }
     },
     methods: {
@@ -165,6 +176,15 @@
   .input select {
     border: 1px solid #ccc;
     font: inherit;
+  }
+
+  .input.invalid label {
+      color: red;
+  }
+
+  .input.invalid input {
+      border: 1px solid red;
+      background-color: #ffd9ce;
   }
 
   .hobbies button {

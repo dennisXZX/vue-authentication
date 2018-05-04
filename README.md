@@ -1,6 +1,6 @@
-## Vue Authentication
+## Vue Authentication and Validation
 
-Powered by Vue, Vuex, Axios, Firebase
+Powered by Vue, Vuex, Vuelidate, Axios, Firebase
 
 #### Steps
 - run `npm install` to install dependencies
