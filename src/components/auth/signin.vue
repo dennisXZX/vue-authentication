@@ -8,10 +8,10 @@
                     <input
                             type="email"
                             id="email"
-                            @input="$v.email.$touch()"
+                            @blur="$v.email.$touch()"
                             v-model="email">
-                    <div v-if="!$v.email.email">Please provide a valid email address.</div>
-                    <div v-if="!$v.email.required">This field must not be empty.</div>
+                    <p v-if="!$v.email.email">Please provide a valid email address.</p>
+                    <p v-if="!$v.email.required">This field must not be empty.</p>
                 </div>
 
                 <!-- password -->
