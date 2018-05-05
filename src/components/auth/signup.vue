@@ -12,6 +12,7 @@
                             v-model="email">
                     <p v-if="!$v.email.email">Please provide a valid email address.</p>
                     <p v-if="!$v.email.required">This field must not be empty.</p>
+                    <p v-if="!$v.email.unique">This email address has already been taken.</p>
                 </div>
                 <!-- age -->
                 <div class="input" :class="{ invalid: $v.age.$error }">
@@ -96,6 +97,7 @@
     required, email, numeric,
     minValue, minLength, sameAs, requiredUnless
   } from 'vuelidate/lib/validators'
+  import axios from 'axios'
 
   export default {
     data() {
@@ -113,7 +115,19 @@
     validations: {
       email: {
         required,
-        email
+        email,
+        unique: (value) => {
+          if (value === '') {
+            return true;
+          }
+
+          // check if the email has already been registered
+          // the email can be used if the data object is an empty object
+          return axios.get(`/users.json?orderBy="email"&equalTo="${value}"`)
+            .then(res => {
+              return Object.keys(res.data).length === 0
+            })
+        }
       },
       age: {
         required,
