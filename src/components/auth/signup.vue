@@ -60,13 +60,16 @@
                         <div
                                 class="input"
                                 v-for="(hobbyInput, index) in hobbyInputs"
+                                :class="{ invalid: $v.hobbyInputs.$each[index].$error }"
                                 :key="hobbyInput.id">
                             <label :for="hobbyInput.id">Hobby #{{ index }}</label>
                             <input
                                     type="text"
                                     :id="hobbyInput.id"
+                                    @blur="$v.hobbyInputs.$each[index].value.$touch()"
                                     v-model="hobbyInput.value">
                             <button @click="onDeleteHobby(hobbyInput.id)" type="button">X</button>
+                            <p v-if="$v.hobbyInputs.$each[index].$error">Hobby field should not be empty.</p>
                         </div>
                     </div>
                 </div>
@@ -128,6 +131,14 @@
         required: requiredUnless(vm => {
           return vm.country !== 'germany'
         })
+      },
+      hobbyInputs: {
+        minLen: minLength(1),
+        $each: {
+          value: {
+            required
+          }
+        }
       }
     },
     methods: {
